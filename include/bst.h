@@ -7,70 +7,70 @@
 #include <vector>
 #include <utility>
 
-template<typename T>
-class BST {
+template<typename KeyType>
+class BinarySearchTree {
  private:
-    struct Node {
-        T key;
-        int count;
-        Node* left;
-        Node* right;
-        explicit Node(const T& k) : key(k), count(1), left(nullptr), right(nullptr) {}
+    struct TreeNode {
+        KeyType data;
+        int freq;
+        TreeNode* leftChild;
+        TreeNode* rightChild;
+        explicit TreeNode(const KeyType& val) : data(val), freq(1), leftChild(nullptr), rightChild(nullptr) {}
     };
-    Node* root;
+    TreeNode* rootNode;
 
-    void insert(Node*& node, const T& key) {
-        if (!node) {
-            node = new Node(key);
-        } else if (key < node->key) {
-            insert(node->left, key);
-        } else if (key > node->key) {
-            insert(node->right, key);
+    void addNode(TreeNode*& current, const KeyType& val) {
+        if (!current) {
+            current = new TreeNode(val);
+        } else if (val < current->data) {
+            addNode(current->leftChild, val);
+        } else if (val > current->data) {
+            addNode(current->rightChild, val);
         } else {
-            node->count++;
+            current->freq++;
         }
     }
 
-    bool search(Node* node, const T& key) const {
-        if (!node) return false;
-        if (key < node->key) return search(node->left, key);
-        if (key > node->key) return search(node->right, key);
-        return true;
+    int findNode(TreeNode* current, const KeyType& val) const {
+        if (!current) return 0;
+        if (val < current->data) return findNode(current->leftChild, val);
+        if (val > current->data) return findNode(current->rightChild, val);
+        return current->freq;
     }
 
-    int height(Node* node) const {
-        if (!node) return -1;
-        return 1 + std::max(height(node->left), height(node->right));
+    int computeHeight(TreeNode* current) const {
+        if (!current) return -1;
+        return 1 + std::max(computeHeight(current->leftChild), computeHeight(current->rightChild));
     }
 
-    void clear(Node* node) {
-        if (node) {
-            clear(node->left);
-            clear(node->right);
-            delete node;
+    void deleteTree(TreeNode* current) {
+        if (current) {
+            deleteTree(current->leftChild);
+            deleteTree(current->rightChild);
+            delete current;
         }
     }
 
-    void inorderCollect(Node* node, std::vector<std::pair<T, int>>& vec) const {
-        if (node) {
-            inorderCollect(node->left, vec);
-            vec.emplace_back(node->key, node->count);
-            inorderCollect(node->right, vec);
+    void traverseInOrder(TreeNode* current, std::vector<std::pair<KeyType, int>>& result) const {
+        if (current) {
+            traverseInOrder(current->leftChild, result);
+            result.emplace_back(current->data, current->freq);
+            traverseInOrder(current->rightChild, result);
         }
     }
 
  public:
-    BST() : root(nullptr) {}
-    ~BST() { clear(root); }
+    BinarySearchTree() : rootNode(nullptr) {}
+    ~BinarySearchTree() { deleteTree(rootNode); }
 
-    void insert(const T& key) { ::insert(root, key); }
-    bool search(const T& key) const { return search(root, key); }
-    int depth() const { return height(root) + 1; }  // Возвращаем количество узлов, а не рёбер
-    std::vector<std::pair<T, int>> getNodes() const {
-        std::vector<std::pair<T, int>> vec;
-        inorderCollect(root, vec);
-        return vec;
+    void insert(const KeyType& val) { addNode(rootNode, val); }
+    int lookup(const KeyType& val) const { return findNode(rootNode, val); }
+    int getDepth() const { return computeHeight(rootNode); }
+    std::vector<std::pair<KeyType, int>> fetchAllNodes() const {
+        std::vector<std::pair<KeyType, int>> result;
+        traverseInOrder(rootNode, result);
+        return result;
     }
 };
 
-#endif  // INCLUDE_BST_H_
+#endif  // INCLUDE_BST_H__
