@@ -35,7 +35,7 @@ void makeTree(BST<std::string>& tree, const char* filename) {
 }
 
 void printFreq(BST<std::string>& tree) {
-    auto nodes = tree.getNodes();
+    auto nodes = tree.getNodes();  // Используем getNodes(), а не getAllNodes()
     std::sort(nodes.begin(), nodes.end(),
         [](const std::pair<std::string, int>& a,
            const std::pair<std::string, int>& b) {
