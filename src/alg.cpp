@@ -1,4 +1,4 @@
-// Copyright 2021 NNTU-CS
+// Copyright 2025 NNTU-CS
 #include "alg.h"
 
 #include <algorithm>
@@ -7,52 +7,53 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include <vector>
 
-void makeTree(BST<std::string>& tree, const char* filename) {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Cannot open file: " << filename << std::endl;
+void buildTree(BinarySearchTree<std::string>& bst, const char* filepath) {
+    std::ifstream inputFile(filepath);
+    if (!inputFile) {
+        std::cerr << "Cannot open file: " << filepath << std::endl;
         return;
     }
 
-    std::string word;
-    char ch;
-    while (file.get(ch)) {
-        if (std::isalpha(static_cast<unsigned char>(ch))) {
-            word.push_back(std::tolower(static_cast<unsigned char>(ch)));
+    std::string buffer;
+    char symbol;
+    while (inputFile.get(symbol)) {
+        if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
+            symbol = std::tolower(static_cast<unsigned char>(symbol));
+            buffer.push_back(symbol);
         } else {
-            if (!word.empty()) {
-                tree.insert(word);
-                word.clear();
+            if (!buffer.empty()) {
+                bst.insert(buffer);
+                buffer.clear();
             }
         }
     }
-    if (!word.empty()) {
-        tree.insert(word);
+    if (!buffer.empty()) {
+        bst.insert(buffer);
     }
-    file.close();
+    inputFile.close();
 }
 
-void printFreq(BST<std::string>& tree) {
-    auto nodes = tree.getNodes();  // Используем getNodes(), а не getAllNodes()
-    std::sort(nodes.begin(), nodes.end(),
-        [](const std::pair<std::string, int>& a,
-           const std::pair<std::string, int>& b) {
-            if (a.second != b.second)
-                return a.second > b.second;
-            return a.first < b.first;
+void displayFrequency(BinarySearchTree<std::string>& bst) {
+    auto entries = bst.fetchAllNodes();
+    std::sort(entries.begin(), entries.end(),
+        [](const std::pair<std::string, int>& first,
+           const std::pair<std::string, int>& second) {
+            if (first.second != second.second) return first.second > second.second;
+            return first.first < second.first;
         });
 
-    std::ofstream out("result/freq.txt");
-    if (!out) {
-        std::cerr << "Cannot create result/freq.txt" << std::endl;
-        return;
+    for (const auto& item : entries) {
+        std::cout << item.first << " " << item.second << std::endl;
     }
 
-    for (const auto& p : nodes) {
-        std::cout << p.first << ": " << p.second << std::endl;
-        out << p.first << ": " << p.second << std::endl;
+    std::ofstream output("result/freq.txt");
+    if (!output) {
+        std::cerr << "Failed to create result/freq.txt" << std::endl;
+        return;
     }
-    out.close();
+    for (const auto& item : entries) {
+        output << item.first << " " << item.second << std::endl;
+    }
+    output.close();
 }
