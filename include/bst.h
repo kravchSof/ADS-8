@@ -7,69 +7,69 @@
 #include <vector>
 #include <utility>
 
-template<typename KeyType>
-class BinarySearchTree {
+template<typename DataType>
+class BST {
  private:
     struct TreeNode {
-        KeyType data;
-        int freq;
-        TreeNode* leftChild;
-        TreeNode* rightChild;
-        explicit TreeNode(const KeyType& val) : data(val), freq(1), leftChild(nullptr), rightChild(nullptr) {}
+        DataType value;
+        int occurrences;
+        TreeNode* leftBranch;
+        TreeNode* rightBranch;
+        explicit TreeNode(const DataType& val) : value(val), occurrences(1), leftBranch(nullptr), rightBranch(nullptr) {}
     };
-    TreeNode* rootNode;
+    TreeNode* top;
 
-    void addNode(TreeNode*& current, const KeyType& val) {
+    void addNode(TreeNode*& current, const DataType& val) {
         if (!current) {
             current = new TreeNode(val);
-        } else if (val < current->data) {
-            addNode(current->leftChild, val);
-        } else if (val > current->data) {
-            addNode(current->rightChild, val);
+        } else if (val < current->value) {
+            addNode(current->leftBranch, val);
+        } else if (val > current->value) {
+            addNode(current->rightBranch, val);
         } else {
-            current->freq++;
+            current->occurrences++;
         }
     }
 
-    int findNode(TreeNode* current, const KeyType& val) const {
+    int findNode(TreeNode* current, const DataType& val) const {
         if (!current) return 0;
-        if (val < current->data) return findNode(current->leftChild, val);
-        if (val > current->data) return findNode(current->rightChild, val);
-        return current->freq;
+        if (val < current->value) return findNode(current->leftBranch, val);
+        if (val > current->value) return findNode(current->rightBranch, val);
+        return current->occurrences;
     }
 
-    int computeHeight(TreeNode* current) const {
+    int calcHeight(TreeNode* current) const {
         if (!current) return -1;
-        return 1 + std::max(computeHeight(current->leftChild), computeHeight(current->rightChild));
+        return 1 + std::max(calcHeight(current->leftBranch), calcHeight(current->rightBranch));
     }
 
-    void deleteTree(TreeNode* current) {
+    void eraseTree(TreeNode* current) {
         if (current) {
-            deleteTree(current->leftChild);
-            deleteTree(current->rightChild);
+            eraseTree(current->leftBranch);
+            eraseTree(current->rightBranch);
             delete current;
         }
     }
 
-    void traverseInOrder(TreeNode* current, std::vector<std::pair<KeyType, int>>& result) const {
+    void collectInOrder(TreeNode* current, std::vector<std::pair<DataType, int>>& container) const {
         if (current) {
-            traverseInOrder(current->leftChild, result);
-            result.emplace_back(current->data, current->freq);
-            traverseInOrder(current->rightChild, result);
+            collectInOrder(current->leftBranch, container);
+            container.emplace_back(current->value, current->occurrences);
+            collectInOrder(current->rightBranch, container);
         }
     }
 
  public:
-    BinarySearchTree() : rootNode(nullptr) {}
-    ~BinarySearchTree() { deleteTree(rootNode); }
+    BST() : top(nullptr) {}
+    ~BST() { eraseTree(top); }
 
-    void insert(const KeyType& val) { addNode(rootNode, val); }
-    int lookup(const KeyType& val) const { return findNode(rootNode, val); }
-    int getDepth() const { return computeHeight(rootNode); }
-    std::vector<std::pair<KeyType, int>> fetchAllNodes() const {
-        std::vector<std::pair<KeyType, int>> result;
-        traverseInOrder(rootNode, result);
-        return result;
+    void add(const DataType& val) { addNode(top, val); }
+    int search(const DataType& val) const { return findNode(top, val); }
+    int depth() const { return calcHeight(top); }
+    std::vector<std::pair<DataType, int>> getAllNodes() const {
+        std::vector<std::pair<DataType, int>> container;
+        collectInOrder(top, container);
+        return container;
     }
 };
 
