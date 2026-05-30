@@ -1,18 +1,20 @@
-// Copyright 2021 NNTU-CS
-#include "alg.h"
+// Copyright 2025 NNTU-CS
+#include "main.h"
 
 #include <iostream>
 #include <string>
+#include "alg.h"
 
 int main() {
-    BST<std::string> tree;
-    makeTree(tree, "src/war_peace.txt");
+    BinarySearchTree<std::string> wordTree;
+    const char* inputFile = "war_peace.txt";
 
-    std::cout << "Tree depth: " << tree.depth() << std::endl;
-    std::cout << "Search 'war': " << (tree.search("war") ? "found" : "not found") << std::endl;
-    std::cout << "Search 'xxx': " << (tree.search("xxx") ? "found" : "not found") << std::endl;
+    buildTree(wordTree, inputFile);
+    std::cout << "Tree height: " << wordTree.getDepth() << std::endl;
+    std::cout << "pierre frequency: " << wordTree.lookup("pierre") << std::endl;
+    std::cout << "natasha frequency: " << wordTree.lookup("natasha") << std::endl;
+    std::cout << "andrew frequency: " << wordTree.lookup("andrew") << std::endl;
 
-    printFreq(tree);
-
+    displayFrequency(wordTree);
     return 0;
 }
