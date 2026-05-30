@@ -5,7 +5,7 @@
 #include <string>
 #include "bst.h"
 
-void buildTree(BinarySearchTree<std::string>& bst, const char* filepath);
-void displayFrequency(BinarySearchTree<std::string>& bst);
+void makeTree(BST<std::string>& tree, const char* filename);
+void printFreq(BST<std::string>& tree);
 
 #endif  // INCLUDE_ALG_H__
