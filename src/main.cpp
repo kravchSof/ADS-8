@@ -1,5 +1,4 @@
 // Copyright 2025 NNTU-CS
-#include "main.h"
 
 #include <iostream>
 #include <string>
