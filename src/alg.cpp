@@ -39,7 +39,7 @@ void printFreq(BST<std::string>& bstStructure) {
     std::sort(items.begin(), items.end(),
         [](const std::pair<std::string, int>& firstItem,
            const std::pair<std::string, int>& secondItem) {
-            if (firstItem.second != secondItem.second) 
+            if (firstItem.second != secondItem.second)
                 return firstItem.second > secondItem.second;
             return firstItem.first < secondItem.first;
         });
