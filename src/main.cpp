@@ -5,15 +5,15 @@
 #include "alg.h"
 
 int main() {
-    BinarySearchTree<std::string> wordTree;
-    const char* inputFile = "war_peace.txt";
+    BST<std::string> tree;
+    const char* filename = "war_peace.txt";
 
-    buildTree(wordTree, inputFile);
-    std::cout << "Tree height: " << wordTree.getDepth() << std::endl;
-    std::cout << "pierre frequency: " << wordTree.lookup("pierre") << std::endl;
-    std::cout << "natasha frequency: " << wordTree.lookup("natasha") << std::endl;
-    std::cout << "andrew frequency: " << wordTree.lookup("andrew") << std::endl;
+    makeTree(tree, filename);
+    std::cout << "Depth: " << tree.depth() << std::endl;
+    std::cout << "pierre: " << tree.search("pierre") << std::endl;
+    std::cout << "natasha: " << tree.search("natasha") << std::endl;
+    std::cout << "andrew: " << tree.search("andrew") << std::endl;
 
-    displayFrequency(wordTree);
+    printFreq(tree);
     return 0;
 }
