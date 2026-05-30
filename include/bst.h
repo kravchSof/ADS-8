@@ -2,7 +2,8 @@
 #ifndef INCLUDE_BST_H_
 #define INCLUDE_BST_H_
 
-#include <iostream>
+#include <vector>
+#include <utility>
 #include <algorithm>
 
 template<typename T>
@@ -13,7 +14,7 @@ class BST {
         int count;
         Node* left;
         Node* right;
-        Node(const T& k) : key(k), count(1), left(nullptr), right(nullptr) {}
+        explicit Node(const T& k) : key(k), count(1), left(nullptr), right(nullptr) {}
     };
     Node* root;
 
@@ -40,7 +41,6 @@ class BST {
         } else if (value > node->key) {
             node->right = insertHelper(node->right, value, inserted);
         } else {
-            // ключ уже существует
             node->count++;
             inserted = false;
         }
@@ -57,7 +57,7 @@ class BST {
     void inorderCollect(Node* node, std::vector<std::pair<T, int>>& vec) const {
         if (!node) return;
         inorderCollect(node->left, vec);
-        vec.push_back({node->key, node->count});
+        vec.push_back(std::make_pair(node->key, node->count));
         inorderCollect(node->right, vec);
     }
 
@@ -78,7 +78,6 @@ class BST {
         return depthHelper(root);
     }
 
-    // Получить все узлы в виде пар (ключ, частота) для сортировки по частоте
     std::vector<std::pair<T, int>> getNodes() const {
         std::vector<std::pair<T, int>> vec;
         inorderCollect(root, vec);
