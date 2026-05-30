@@ -1,10 +1,11 @@
-// Copyright 2021 NNTU-CS
-#ifndef INCLUDE_BST_H_
-#define INCLUDE_BST_H_
+// Copyright 2025 NNTU-CS
+#ifndef INCLUDE_BST_H__
+#define INCLUDE_BST_H__
 
+#include <string>
+#include <algorithm>
 #include <vector>
 #include <utility>
-#include <algorithm>
 
 template<typename T>
 class BST {
@@ -18,65 +19,53 @@ class BST {
     };
     Node* root;
 
-    void destroy(Node* node) {
+    void insert(Node*& node, const T& key) {
+        if (!node) {
+            node = new Node(key);
+        } else if (key < node->key) {
+            insert(node->left, key);
+        } else if (key > node->key) {
+            insert(node->right, key);
+        } else {
+            node->count++;
+        }
+    }
+
+    bool search(Node* node, const T& key) const {
+        if (!node) return false;
+        if (key < node->key) return search(node->left, key);
+        if (key > node->key) return search(node->right, key);
+        return true;
+    }
+
+    int height(Node* node) const {
+        if (!node) return -1;
+        return 1 + std::max(height(node->left), height(node->right));
+    }
+
+    void clear(Node* node) {
         if (node) {
-            destroy(node->left);
-            destroy(node->right);
+            clear(node->left);
+            clear(node->right);
             delete node;
         }
     }
 
-    int depthHelper(Node* node) const {
-        if (!node) return 0;
-        int leftDepth = depthHelper(node->left);
-        int rightDepth = depthHelper(node->right);
-        return 1 + std::max(leftDepth, rightDepth);
-    }
-
-    Node* insertHelper(Node* node, const T& value) {
-        if (!node) {
-            return new Node(value);
-        }
-        if (value < node->key) {
-            node->left = insertHelper(node->left, value);
-        } else if (value > node->key) {
-            node->right = insertHelper(node->right, value);
-        } else {
-            node->count++;
-        }
-        return node;
-    }
-
-    bool searchHelper(Node* node, const T& value) const {
-        if (!node) return false;
-        if (value == node->key) return true;
-        if (value < node->key) return searchHelper(node->left, value);
-        return searchHelper(node->right, value);
-    }
-
     void inorderCollect(Node* node, std::vector<std::pair<T, int>>& vec) const {
-        if (!node) return;
-        inorderCollect(node->left, vec);
-        vec.push_back(std::make_pair(node->key, node->count));
-        inorderCollect(node->right, vec);
+        if (node) {
+            inorderCollect(node->left, vec);
+            vec.emplace_back(node->key, node->count);
+            inorderCollect(node->right, vec);
+        }
     }
 
  public:
     BST() : root(nullptr) {}
-    ~BST() { destroy(root); }
+    ~BST() { clear(root); }
 
-    void insert(const T& value) {
-        root = insertHelper(root, value);
-    }
-
-    bool search(const T& value) const {
-        return searchHelper(root, value);
-    }
-
-    int depth() const {
-        return depthHelper(root);
-    }
-
+    void insert(const T& key) { ::insert(root, key); }
+    bool search(const T& key) const { return search(root, key); }
+    int depth() const { return height(root) + 1; }  // Возвращаем количество узлов, а не рёбер
     std::vector<std::pair<T, int>> getNodes() const {
         std::vector<std::pair<T, int>> vec;
         inorderCollect(root, vec);
