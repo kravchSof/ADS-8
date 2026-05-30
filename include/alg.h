@@ -1,11 +1,11 @@
-// Copyright 2021 NNTU-CS
-#ifndef INCLUDE_ALG_H_
-#define INCLUDE_ALG_H_
+// Copyright 2025 NNTU-CS
+#ifndef INCLUDE_ALG_H__
+#define INCLUDE_ALG_H__
 
-#include "bst.h"
 #include <string>
+#include "bst.h"
 
-void makeTree(BST<std::string>& tree, const char* filename);
-void printFreq(BST<std::string>& tree);
+void buildTree(BinarySearchTree<std::string>& bst, const char* filepath);
+void displayFrequency(BinarySearchTree<std::string>& bst);
 
-#endif  // INCLUDE_ALG_H_
+#endif  // INCLUDE_ALG_H__
