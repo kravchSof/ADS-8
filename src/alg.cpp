@@ -8,52 +8,53 @@
 #include <string>
 #include <utility>
 
-void buildTree(BinarySearchTree<std::string>& bst, const char* filepath) {
-    std::ifstream inputFile(filepath);
-    if (!inputFile) {
-        std::cerr << "Cannot open file: " << filepath << std::endl;
+void makeTree(BST<std::string>& bstStructure, const char* filePath) {
+    std::ifstream sourceFile(filePath);
+    if (!sourceFile.is_open()) {
+        std::cerr << "Error: Unable to open " << filePath << std::endl;
         return;
     }
 
-    std::string buffer;
-    char symbol;
-    while (inputFile.get(symbol)) {
-        if ((symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
-            symbol = std::tolower(static_cast<unsigned char>(symbol));
-            buffer.push_back(symbol);
+    std::string currentWord;
+    char currentChar;
+    while (sourceFile.get(currentChar)) {
+        if (std::isalpha(static_cast<unsigned char>(currentChar))) {
+            currentChar = std::tolower(static_cast<unsigned char>(currentChar));
+            currentWord.push_back(currentChar);
         } else {
-            if (!buffer.empty()) {
-                bst.insert(buffer);
-                buffer.clear();
+            if (!currentWord.empty()) {
+                bstStructure.add(currentWord);
+                currentWord.clear();
             }
         }
     }
-    if (!buffer.empty()) {
-        bst.insert(buffer);
+    if (!currentWord.empty()) {
+        bstStructure.add(currentWord);
     }
-    inputFile.close();
+    sourceFile.close();
 }
 
-void displayFrequency(BinarySearchTree<std::string>& bst) {
-    auto entries = bst.fetchAllNodes();
-    std::sort(entries.begin(), entries.end(),
-        [](const std::pair<std::string, int>& first,
-           const std::pair<std::string, int>& second) {
-            if (first.second != second.second) return first.second > second.second;
-            return first.first < second.first;
+void printFreq(BST<std::string>& bstStructure) {
+    auto items = bstStructure.getAllNodes();
+    std::sort(items.begin(), items.end(),
+        [](const std::pair<std::string, int>& firstItem,
+           const std::pair<std::string, int>& secondItem) {
+            if (firstItem.second != secondItem.second) 
+                return firstItem.second > secondItem.second;
+            return firstItem.first < secondItem.first;
         });
 
-    for (const auto& item : entries) {
-        std::cout << item.first << " " << item.second << std::endl;
+    for (const auto& entry : items) {
+        std::cout << entry.first << " " << entry.second << std::endl;
     }
 
-    std::ofstream output("result/freq.txt");
-    if (!output) {
-        std::cerr << "Failed to create result/freq.txt" << std::endl;
+    std::ofstream outputFile("result/freq.txt");
+    if (!outputFile) {
+        std::cerr << "Warning: Could not write to result/freq.txt" << std::endl;
         return;
     }
-    for (const auto& item : entries) {
-        output << item.first << " " << item.second << std::endl;
+    for (const auto& entry : items) {
+        outputFile << entry.first << " " << entry.second << std::endl;
     }
-    output.close();
+    outputFile.close();
 }
