@@ -28,21 +28,21 @@ class BST {
 
     int depthHelper(Node* node) const {
         if (!node) return 0;
-        return 1 + std::max(depthHelper(node->left), depthHelper(node->right));
+        int leftDepth = depthHelper(node->left);
+        int rightDepth = depthHelper(node->right);
+        return 1 + std::max(leftDepth, rightDepth);
     }
 
-    Node* insertHelper(Node* node, const T& value, bool& inserted) {
+    Node* insertHelper(Node* node, const T& value) {
         if (!node) {
-            inserted = true;
             return new Node(value);
         }
         if (value < node->key) {
-            node->left = insertHelper(node->left, value, inserted);
+            node->left = insertHelper(node->left, value);
         } else if (value > node->key) {
-            node->right = insertHelper(node->right, value, inserted);
+            node->right = insertHelper(node->right, value);
         } else {
             node->count++;
-            inserted = false;
         }
         return node;
     }
@@ -66,8 +66,7 @@ class BST {
     ~BST() { destroy(root); }
 
     void insert(const T& value) {
-        bool inserted = false;
-        root = insertHelper(root, value, inserted);
+        root = insertHelper(root, value);
     }
 
     bool search(const T& value) const {
